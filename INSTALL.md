@@ -52,7 +52,7 @@ CMD        [ "--portname=/dev/ttyS0", \
 $ podman build -t mhz19-exporter -f Containerfile
 ```
 
-5. Change serial device's SELinux label and SELinux boolean to allow containers to use host devices
+5. Change the serial device's SELinux label and SELinux boolean, to allow containers to use the host serial devices (/dev/ttyS0 in Fedora)
 ```
 $ sudo chcon -t container_file_t /dev/ttyS0
 $ sudo setsebool -P container_use_devices 1
@@ -157,3 +157,8 @@ $ sudo systemctl start nginx
 ```
 
 14. Open a web browser, connect to http://192.168.0.130:3001, and configure a dashboard.
+
+## TO-DOs
+
+* Put together an ansible playbook to automate all of the above (except the OS installation, of course)
+* Write a systemd unit file to make this a service
