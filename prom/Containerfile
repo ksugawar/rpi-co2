@@ -1,0 +1,12 @@
+ARG OS="linux"
+FROM prom/prometheus:latest
+
+WORKDIR /prometheus
+
+USER       nobody
+EXPOSE     19090
+VOLUME     [ "/prometheus" ]
+ENTRYPOINT [ "/bin/prometheus" ]
+CMD        [ "--config.file=/etc/prometheus/prometheus.yml", \
+             "--storage.tsdb.path=/prometheus", \
+             "--web.listen-address=:19090" ]
