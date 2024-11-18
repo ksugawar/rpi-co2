@@ -4,6 +4,10 @@ Build a CO2 monitor using my Raspberry Pi (without writing a line of code)
 ## How to install
 
 1. Install Fedora 40 to Raspberry Pi 4
+Create User, enable linger:
+```
+$ loginctl enable-linger <your-login>
+```
 
 2. Create a pod
 ```
@@ -159,6 +163,6 @@ $ sudo systemctl start nginx
 14. Open a web browser, connect to http://192.168.0.130:3001, and configure a dashboard.
 
 ## TO-DOs
-
+* ~Generate a systemd unit file to make this a service~
+* Generate a quadlet file for the pod/containers
 * Put together an ansible playbook to automate all of the above (except the OS installation, of course)
-* Write a systemd unit file to make this a service
