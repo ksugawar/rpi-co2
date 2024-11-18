@@ -4,6 +4,7 @@ Build a CO2 monitor using my Raspberry Pi (without writing a line of code)
 ## How to install
 
 1. Install Fedora 40 to Raspberry Pi 4
+
 Create User, enable linger:
 ```
 $ loginctl enable-linger <your-login>
