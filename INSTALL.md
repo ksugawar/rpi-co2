@@ -3,19 +3,31 @@ Build a CO2 monitor using my Raspberry Pi (without writing a line of code)
 
 ## How to install
 
-1. Install Fedora 40 to Raspberry Pi 4
+1. Install Fedora 40 Server (or Raspberry Pi OS Lite or whatever) to your Raspberry Pi
 
-Create User, enable linger:
+1. Create User, and enable linger:
 ```
 $ loginctl enable-linger <your-login>
 ```
 
-2. Create a pod
+1. Install additional packages
+
+Below example is required in case of RasPi OS Lite:
+```
+$ sudo apt install podman git python3-serial
+```
+
+1. Git clone this repo
+```
+$ git clone <URI>
+```
+
+1. Create a pod
 ```
 $ podman pod create --network=host --name co2mon
 ```
 
-3. Run customized prometheus container (change port to 19090 because 9090 is in use by cockpit)
+1. Run customized prometheus container (change port to 19090 because 9090 is in use by cockpit)
 ```
 $ cd prom
 $ cat Containerfile
@@ -35,7 +47,7 @@ $ podman build -t myprometheus -f Containerfile
 $ podman run -d --pod co2mon --name prometheus localhost/myprometheus
 ```
 
-4. Build mhz19-exporter image
+1. Build mhz19-exporter image
 ```
 $ git clone https://github.com/mhansen/mhz19-exporter.git
 $ cd mhz19-exporter
@@ -57,18 +69,18 @@ CMD        [ "--portname=/dev/ttyS0", \
 $ podman build -t mhz19-exporter -f Containerfile
 ```
 
-5. Change the serial device's SELinux label and SELinux boolean, to allow containers to use the host serial devices (/dev/ttyS0 in Fedora)
+1. Change the serial device's SELinux label and SELinux boolean, to allow containers to use the host serial devices (/dev/ttyS0 in Fedora)
 ```
 $ sudo chcon -t container_file_t /dev/ttyS0
 $ sudo setsebool -P container_use_devices 1
 ```
 
-6. Run mhz19-exporter container
+1. Run mhz19-exporter container
 ```
 $ podman run -d --pod co2mon --device /dev/ttyS0 --group-add keep-groups --name mhz19 mhz19-exporter
 ```
 
-7. Change prometheus.conf so that it scrapes mhz19 exporter
+1. Change prometheus.conf so that it scrapes mhz19 exporter
 ```
 $ podman exec prometheus sh -c 'cat - >/etc/prometheus/prometheus.yml' <<EOF
 # my global config
@@ -103,23 +115,23 @@ scrape_configs:
 EOF
 ```
 
-8. Restart prometheus container
+1. Restart prometheus container
 ```
 $ podman stop prometheus
 $ podman start prometheus
 ```
 
-9. Run grafana container
+1. Run grafana container
 ```
 $ podman run -d --pod co2mon --name grafana grafana/grafana-oss
 ```
 
-10. Install nginx
+1. Install nginx
 ```
 $ sudo dnf install -y nginx
 ```
 
-11. Add reverse-proxy conf for prometheus and grafana
+1. Add reverse-proxy conf for prometheus and grafana
 ```
 $ cat /etc/nginx/conf.d/co2mon.conf
 server {
@@ -149,19 +161,19 @@ server {
 }
 ```
 
-12. Change a couple of SELinux settings to let nginx listen to non-standard ports and connect to prometheus/grafana
+1. Change a couple of SELinux settings to let nginx listen to non-standard ports and connect to prometheus/grafana
 ```
 $ sudo semanage port -a -t http_port_t -p tcp 19091
 $ sudo semanage port -a -t http_port_t -p tcp 3001
 $ sudo setsebool -P httpd_can_network_connect 1
 ```
 
-13. Start nginx
+1. Start nginx
 ```
 $ sudo systemctl start nginx
 ```
 
-14. Open a web browser, connect to http://192.168.0.130:3001, and configure a dashboard.
+1. Open a web browser, connect to http://192.168.0.130:3001, and configure a dashboard.
 
 ## TO-DOs
 * ~Generate a systemd unit file to make this a service~
