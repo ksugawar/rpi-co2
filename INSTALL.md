@@ -44,7 +44,9 @@ CMD        [ "--config.file=/etc/prometheus/prometheus.yml", \
              "--storage.tsdb.path=/prometheus", \
              "--web.listen-address=:19090" ]
 $ podman build -t myprometheus -f Containerfile
-$ podman run -d --pod co2mon --name prometheus localhost/myprometheus
+$ mkdir ./promvol
+$ podman unshare chown nobody:nobody ./promvol
+$ podman run -d --pod co2mon --name prometheus --volume ./promvol:/prometheus localhost/myprometheus
 ```
 
 7. Build mhz19-exporter image
