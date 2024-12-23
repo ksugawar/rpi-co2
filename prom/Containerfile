@@ -1,6 +1,7 @@
 ARG OS="linux"
 FROM prom/prometheus:latest
 ADD prometheus.yml /etc/prometheus/prometheus.yml
+ADD targets.d/*.yml /targets.d/
 
 WORKDIR /prometheus
 
