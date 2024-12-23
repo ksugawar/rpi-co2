@@ -80,7 +80,7 @@ $ sudo setsebool -P container_use_devices 1
 $ podman run -d --pod co2mon --device /dev/ttyS0 --group-add keep-groups --name mhz19 mhz19-exporter
 ```
 
-10. Change prometheus.conf so that it scrapes mhz19 exporter
+10. ~Change prometheus.conf so that it scrapes mhz19 exporter~ (This is now taken care of in myprometheus image)
 ```
 $ podman exec prometheus sh -c 'cat - >/etc/prometheus/prometheus.yml' <<EOF
 # my global config
@@ -115,7 +115,7 @@ scrape_configs:
 EOF
 ```
 
-11. Restart prometheus container
+11. ~Restart prometheus container~ (Not necessary anymore. See above)
 ```
 $ podman stop prometheus
 $ podman start prometheus
@@ -174,6 +174,18 @@ $ sudo systemctl start nginx
 ```
 
 17. Open a web browser, connect to http://192.168.0.130:3001, and configure a dashboard.
+
+18. When adding a new scrape target, do something like:
+```
+$ podman exec prometheus sh -c 'cat - >/targets.d/new-target.yml' <<EOF
+- targets:
+    - '192.168.0.XXX:9672'
+  labels:
+    job: 'prometheus'
+EOF
+$ podman stop prometheus
+$ podman start prometheus
+```
 
 ## TO-DOs
 * ~Generate a systemd unit file to make this a service~
