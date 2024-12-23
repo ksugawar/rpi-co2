@@ -185,6 +185,13 @@ $ podman exec prometheus sh -c 'cat - >/targets.d/new-target.yml' <<EOF
   labels:
     job: 'prometheus'
 EOF
+```
+or
+```
+$ podman cp new-target.yml prometheus:/targets.d/
+```
+then, run
+```
 $ podman stop prometheus
 $ podman start prometheus
 ```
