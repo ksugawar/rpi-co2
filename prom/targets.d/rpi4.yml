@@ -1,0 +1,10 @@
+- targets:
+    - 'localhost:9672'
+  labels:
+    job: 'prometheus'
+
+- targets:
+    - 'localhost:9100'
+  labels:
+    job: 'prometheus'
+
