@@ -46,7 +46,7 @@ CMD        [ "--config.file=/etc/prometheus/prometheus.yml", \
 $ podman build -t myprometheus -f Containerfile
 $ mkdir ./promvol
 $ podman unshare chown nobody:nobody ./promvol
-$ podman run -d --pod co2mon --name prometheus --volume ./promvol:/prometheus localhost/myprometheus
+$ podman run -d --pod co2mon --name prometheus --volume ./promvol:/prometheus:z localhost/myprometheus
 ```
 
 7. Build mhz19-exporter image
